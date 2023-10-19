@@ -25,8 +25,12 @@ jobs:
       - name: Test cherry-pick
         run: |
           git --version
-          echo "-- Git Version --"
+
+          git config --global user.email ""
+          git config --global user.name "Botman"
+          
           git fetch --all
+          echo "-- Git Status --"
           git status
           echo -e "\n"
 
