@@ -68,7 +68,7 @@ jobs:
             commitMessage=$(git log -n 1 --pretty=format:%s $commitToMerge)
 
             echo "- Cherry picking"
-            git cherry-pick -m 1 --allow-empty  --no-commit $commitToMerge && conflict=$? || conflict=$?
+            git cherry-pick -m 1 --allow-empty --strategy-option theirs --no-commit $commitToMerge && conflict=$? || conflict=$?
 
             if [ $ret -ne 0 ]; then
               echo "- Cherry-pick failed, commiting anyway"
