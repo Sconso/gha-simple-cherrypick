@@ -70,7 +70,7 @@ jobs:
               echo "- Cherry-pick failed, commiting anyway"
             fi
 
-            git commit -am "$commitMessage"
+            git commit --allow-empty -am "$commitMessage"
 
             echo "- Pushing changes"
             git push origin cherry-pick/$tag
