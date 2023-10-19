@@ -26,59 +26,55 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          echo "-- Git Infos --"
           git --version
 
           git config --global user.email ""
           git config --global user.name "Botman"
           
-          git fetch --all
-          echo "-- Git Status --"
-          git status
-          echo -e "\n"
+          git fetch --all > /dev/null
 
+          echo -e "\n-- Inputs --"
           prNumber=${{ github.event.inputs.prNumber }}
           prInfos=$(gh pr view $prNumber --json mergeCommit,title,body)
-          
-          echo "PR Number is $prNumber"
-
-
-
           commitToMerge=$(echo $prInfos | jq -r '.mergeCommit.oid')   
           prTitle=$(echo $prInfos | jq -r '.title')
           prBody=$(echo $prInfos | jq -r '.body')
-     
+
+          echo "PR Number is $prNumber"
+          echo "PR Title is $prTitle"
           echo "Commit is $commitToMerge"
 
-          # Cherry picking commit in each tags separated by a comma
+          echo -e "\n ---------------------------------"
+          echo -e "==== Starting cherry-pick ===="
+
           for tag in $(echo "${{ github.event.inputs.tags }}" | tr ',' '\n'); do
             targetBranch="release/$tag"
             cherryPickBranch="cherry-pick/$tag-$prNumber"
 
-            echo -e "\n-- Cherry-picking commit $commitToMerge in branch $targetBranch --"
+            echo -e "\n-- Trying to cherry-pick commit $commitToMerge in branch $targetBranch --"
             echo "- Checkout $targetBranch"
             git checkout $targetBranch || echo "Branch $targetBranch does not exist, skipping" && continue
 
             echo "- Creating a cherry-pick branch"
             git checkout -b $cherryPickBranch
-            git pull origin $targetBranch
+            git pull origin $targetBranch > /dev/null
 
-            echo "- Cherry-pick commit $commitToMerge in branch $targetBranch"
             commitMessage=$(git log -n 1 --pretty=format:%s $commitToMerge)
 
+            echo "- Cherry picking"
             git cherry-pick -m 1 --allow-empty --strategy-option theirs --no-commit $commitToMerge
 
             if [ $? -ne 0 ]; then
               echo "- Cherry-pick failed, commiting anyway"
             fi
 
-            git commit --allow-empty -am "$commitMessage"
-
             echo "- Pushing changes"
+            git commit --allow-empty -am "$commitMessage"
             git push origin $cherryPickBranch
 
             echo "- Opening pull request"
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
-            newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"            
-
+            newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"
             echo -e "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head $cherryPickBranch -F -
           done
