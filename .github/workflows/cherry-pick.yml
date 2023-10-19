@@ -63,7 +63,7 @@ jobs:
 
             echo "- Creating a cherry-pick branch"
             git checkout -b $cherryPickBranch
-            git pull origin $targetBranch > /dev/null
+            git pull origin $cherryPickBranch > /dev/null
 
             commitMessage=$(git log -n 1 --pretty=format:%s $commitToMerge)
 
