@@ -55,7 +55,12 @@ jobs:
             git checkout -b cherry-pick/$tag
 
             echo "- Cherry-pick commit $commitToMerge in branch $targetBranch"
-            git cherry-pick $commitToMerge
+            git cherry-pick -x --no-commit $commitToMerge
+
+            if [ $? -ne 0 ]; then
+              echo "- Cherry-pick failed, commiting anyway"
+            fi
+
             git commit -am "Cherry pick #$prNumber for tag $tag"
 
             echo "- Pushing changes"
