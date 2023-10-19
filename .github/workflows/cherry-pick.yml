@@ -36,6 +36,7 @@ jobs:
 
             echo "Creating a cherry-pick branch"
             git checkout -b cherry-pick/$tag
+            git fetch
 
             echo "Cherry-pick commit ${{ github.event.inputs.commit }} in tag $tag"
             git cherry-pick ${{ github.event.inputs.commit }}
