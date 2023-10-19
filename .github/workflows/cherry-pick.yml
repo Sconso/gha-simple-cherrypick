@@ -25,6 +25,7 @@ jobs:
           git --version
           echo "-- Git Version --"
           git fetch --all
+          git pull
           git status
           echo -e "\n"
 
@@ -49,4 +50,4 @@ jobs:
 
           #   echo "Opening pull request"
           #   gh pr create --title "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --body "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --base $tag --head cherry-pick/$tag
-          done
+          # done
