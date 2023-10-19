@@ -36,11 +36,16 @@ jobs:
           git status
           echo -e "\n"
 
+          echo "Is JQ installed ?"
+          command -v jq
 
           prNumber=${{ github.event.inputs.prNumber }}
           echo "PR Number is $prNumber"
 
-          commitToMerge=$(gh pr view $prNumber --json mergeCommit --jq '.mergeCommit.oid')        
+          commitToMerge=$(gh pr view $prNumber --json mergeCommit --jq '.mergeCommit.oid')   
+          prTitle=$(gh pr view $prNumber --json title --jq '.title')
+          prBody=$(gh pr view $prNumber --json body --jq '.body')
+     
           echo "Commit is $commitToMerge"
 
           # Cherry picking commit in each tags separated by a comma
@@ -55,17 +60,21 @@ jobs:
             git checkout -b cherry-pick/$tag
 
             echo "- Cherry-pick commit $commitToMerge in branch $targetBranch"
-            git cherry-pick -x --no-commit $commitToMerge
+            commitMessage=$(git log -n 1 --pretty=format:%s $commitToMerge)
+
+            git cherry-pick -m 1 --allow-empty --strategy-option theirs --no-commit $commitToMerge
 
             if [ $? -ne 0 ]; then
               echo "- Cherry-pick failed, commiting anyway"
             fi
 
-            git commit -am "Cherry pick #$prNumber for tag $tag"
+            git commit -am "$commitMessage"
 
             echo "- Pushing changes"
             git push origin cherry-pick/$tag
 
             echo "- Opening pull request"
-            gh pr create --title "Cherry-pick #${prNumber} for tag $tag" --body "Cherry-pick #${prNumber} for tag $tag" --base $targetBranch --head cherry-pick/$tag
+            newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
+            newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"
+            gh pr create --title "$newPrTitle" --body "$newPrBody" --base $targetBranch --head cherry-pick/$tag
           done
