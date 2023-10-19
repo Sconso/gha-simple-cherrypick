@@ -1,20 +1,16 @@
 name: Cherry-pick
 
 on:
-  pull_request:
-    branches:
-      - "main"
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       commit:
-#         type: string
-#         description: Which commit to cherry-pick
-#         required: true
-#       tags:
-#         type: string
-#         description: Which tags to cherry-pick on
-#         required: true
+  workflow_dispatch:
+    inputs:
+      commit:
+        type: string
+        description: Which commit to cherry-pick
+        required: true
+      tags:
+        type: string
+        description: Which tags to cherry-pick on
+        required: true
 
 jobs:
   release-staging:
