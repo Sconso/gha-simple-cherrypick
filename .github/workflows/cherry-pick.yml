@@ -77,13 +77,7 @@ jobs:
 
             echo "- Opening pull request"
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
-            # newPrBody=$(cat <<-EOT
-            #   ### Cherrypicking #${prNumber} on $tag
-            #   -------------
-            #   $prBody
-            # EOT
-            # )
-            newPrBody="Test"
+            newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"            
 
-            gh pr create --title "$newPrTitle" --body "$newPrBody" --base $targetBranch --head cherry-pick/$tag
+            echo "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head cherry-pick/$tag -F -
           done
