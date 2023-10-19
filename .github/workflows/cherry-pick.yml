@@ -68,7 +68,7 @@ jobs:
             commitMessage=$(git log -n 1 --pretty=format:%s $commitToMerge)
 
             echo "- Cherry picking"
-            git cherry-pick -m 1 --allow-empty  --no-commit $commitToMerge && ret=$? || ret=$?
+            git cherry-pick -m 1 --allow-empty  --no-commit $commitToMerge && conflict=$? || conflict=$?
 
             if [ $ret -ne 0 ]; then
               echo "- Cherry-pick failed, commiting anyway"
@@ -81,5 +81,11 @@ jobs:
             echo "- Opening pull request"
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
             newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"
+
+            if [ $conflict -ne 0 ]; then
+              newPrTitle="[⚠️CONFLICTS⚠️]$newPrTitle"
+              newPrBody="⚠️ **This PR has conflicts, please resolve them** ⚠️\n$newPrBody"
+            fi
+
             echo -e "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head $cherryPickBranch -F -
           done
