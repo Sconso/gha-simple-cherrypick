@@ -36,15 +36,16 @@ jobs:
           git status
           echo -e "\n"
 
-          echo "Is JQ installed ?"
-          command -v jq
-
           prNumber=${{ github.event.inputs.prNumber }}
+          prInfos=$(gh pr view $prNumber --json mergeCommit,title,body)
+          
           echo "PR Number is $prNumber"
 
-          commitToMerge=$(gh pr view $prNumber --json mergeCommit --jq '.mergeCommit.oid')   
-          prTitle=$(gh pr view $prNumber --json title --jq '.title')
-          prBody=$(gh pr view $prNumber --json body --jq '.body')
+
+
+          commitToMerge=$(echo $prInfos | jq '.mergeCommit.oid')   
+          prTitle=$(echo $prInfos | jq '.title')
+          prBody=$(echo $prInfos | jq '.body')
      
           echo "Commit is $commitToMerge"
 
@@ -58,6 +59,7 @@ jobs:
 
             echo "- Creating a cherry-pick branch"
             git checkout -b cherry-pick/$tag
+            git pull
 
             echo "- Cherry-pick commit $commitToMerge in branch $targetBranch"
             commitMessage=$(git log -n 1 --pretty=format:%s $commitToMerge)
