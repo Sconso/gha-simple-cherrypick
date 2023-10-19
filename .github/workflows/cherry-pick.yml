@@ -38,7 +38,7 @@ jobs:
 
 
           prNumber=${{ github.event.inputs.prNumber }}
-          commitToMerge=$(gh pr view $prNumber --json --jq '.merge_commit_sha')
+          commitToMerge=$(gh pr view $prNumber --jq '.merge_commit_sha')
           
           
           
