@@ -19,13 +19,12 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v3
       - name: Test cherry-pick
         run: |
           git --version
           echo "-- Git Version --"
           git fetch --all
-          git pull
+          git checkout main
           git status
           echo -e "\n"
 
