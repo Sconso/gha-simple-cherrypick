@@ -33,12 +33,17 @@ jobs:
             echo -e "\n-- Cherry-picking commit ${{ github.event.inputs.commit }} in tag $tag --"
             echo "Checkout tag $tag"
             git checkout $tag
+
+            echo "Creating a cherry-pick branch"
+            git checkout -b cherry-pick/$tag
+
             echo "Cherry-pick commit ${{ github.event.inputs.commit }} in tag $tag"
             git cherry-pick ${{ github.event.inputs.commit }}
 
             # Opens a pull request for the cherry pick
             echo "Pushing changes"
-            git push origin $tag
+            git push origin cherry-pick/$tag
+
             echo "Opening pull request"
-            gh pr create --title "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --body "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --base $tag --head $tag
+            gh pr create --title "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --body "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --base $tag --head cherry-pick/$tag
           done
