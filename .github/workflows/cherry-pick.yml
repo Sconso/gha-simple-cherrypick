@@ -43,9 +43,9 @@ jobs:
 
 
 
-          commitToMerge=$(echo $prInfos | jq '.mergeCommit.oid')   
-          prTitle=$(echo $prInfos | jq '.title')
-          prBody=$(echo $prInfos | jq '.body')
+          commitToMerge=$(echo $prInfos | jq -r '.mergeCommit.oid')   
+          prTitle=$(echo $prInfos | jq -r '.title')
+          prBody=$(echo $prInfos | jq -r '.body')
      
           echo "Commit is $commitToMerge"
 
