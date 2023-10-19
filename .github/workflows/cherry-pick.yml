@@ -54,7 +54,12 @@ jobs:
 
             echo -e "\n-- Trying to cherry-pick commit $commitToMerge in branch $targetBranch --"
             echo "- Checkout $targetBranch"
-            git checkout $targetBranch || echo "Branch $targetBranch does not exist, skipping" && continue
+            git checkout $targetBranch
+            
+            if [ $? -ne 0 ]; then
+              echo "Branch $targetBranch does not exist, skipping"
+              continue
+            fi
 
             echo "- Creating a cherry-pick branch"
             git checkout -b $cherryPickBranch
