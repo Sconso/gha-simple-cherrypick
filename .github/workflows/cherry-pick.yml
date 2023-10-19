@@ -24,8 +24,8 @@ jobs:
         run: |
           git --version
           echo "-- Git Version --"
+          git fetch
           git status
-
           echo -e "\n"
 
           # Cherry picking commit in each tags separated by a comma
