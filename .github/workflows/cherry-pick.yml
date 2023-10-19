@@ -52,13 +52,14 @@ jobs:
           # Cherry picking commit in each tags separated by a comma
           for tag in $(echo "${{ github.event.inputs.tags }}" | tr ',' '\n'); do
             targetBranch="release/$tag"
+            cherryPickBranch="cherry-pick/$tag-$prNumber"
 
             echo -e "\n-- Cherry-picking commit $commitToMerge in branch $targetBranch --"
             echo "- Checkout $targetBranch"
             git checkout $targetBranch || (echo "Branch $targetBranch does not exist, skipping" && continue)
 
             echo "- Creating a cherry-pick branch"
-            git checkout -b cherry-pick/$tag
+            git checkout -b $cherryPickBranch
             git pull origin $targetBranch
 
             echo "- Cherry-pick commit $commitToMerge in branch $targetBranch"
@@ -73,11 +74,11 @@ jobs:
             git commit --allow-empty -am "$commitMessage"
 
             echo "- Pushing changes"
-            git push origin cherry-pick/$tag
+            git push origin $cherryPickBranch
 
             echo "- Opening pull request"
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
             newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"            
 
-            echo -e "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head cherry-pick/$tag -F -
+            echo -e "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head $cherryPickBranch -F -
           done
