@@ -78,9 +78,9 @@ jobs:
             echo "- Opening pull request"
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
             newPrBody=$(cat <<-EOT
-              "### Cherrypicking #${prNumber} on $tag
+              ### Cherrypicking #${prNumber} on $tag
               -------------
-              $prBody"
+              $prBody
             EOT
             )
 
