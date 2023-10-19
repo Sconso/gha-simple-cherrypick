@@ -79,5 +79,5 @@ jobs:
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
             newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"            
 
-            echo "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head cherry-pick/$tag -F -
+            echo -e "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head cherry-pick/$tag -F -
           done
