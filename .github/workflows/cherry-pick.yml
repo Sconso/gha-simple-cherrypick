@@ -1,0 +1,26 @@
+name: Cherry-pick
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        type: string
+        description: Which commit to cherry-pick
+        required: true
+      tags:
+        type: string
+        description: Which tags to cherry-pick on
+        required: true
+
+jobs:
+  release-staging:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test cherry-pick
+        run: |
+          git --version
+          git status
