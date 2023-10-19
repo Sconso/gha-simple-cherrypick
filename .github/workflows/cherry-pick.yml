@@ -40,7 +40,7 @@ jobs:
           prNumber=${{ github.event.inputs.prNumber }}
           echo "PR Number is $prNumber"
 
-          commitToMerge=$(gh pr view $prNumber --json merge_commit_sha --jq '.merge_commit_sha')        
+          commitToMerge=$(gh pr view $prNumber --json mergeCommit)        
           echo "Commit is $commitToMerge"
 
           # Cherry picking commit in each tags separated by a comma
