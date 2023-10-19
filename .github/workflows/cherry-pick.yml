@@ -23,6 +23,8 @@ jobs:
         with:
           fetch-depth: 0
       - name: Test cherry-pick
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git --version
 
