@@ -74,8 +74,15 @@ jobs:
               echo "- Cherry-pick failed, commiting anyway"
             fi
 
+            status=$ret
+            while [ $status -ne 128 ]; do
+              echo "- Commiting"
+              git commit --allow-empty -am "$commitMessage"
+              git cherry-pick --continue > /dev/null 2>&1 && status=$? || status=$?
+            done
+
+
             echo "- Pushing changes"
-            git commit --allow-empty -am "$commitMessage"
             git push origin $cherryPickBranch
 
             echo "- Opening pull request"
