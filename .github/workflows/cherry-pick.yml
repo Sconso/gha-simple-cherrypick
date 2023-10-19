@@ -3,6 +3,10 @@ name: Cherry-pick
 on:
   workflow_dispatch:
     inputs:
+      prNumber:
+        type: string
+        description: Pull request number
+        required: true
       tags:
         type: string
         description: Which tags to cherry-pick on
@@ -32,8 +36,11 @@ jobs:
           git status
           echo -e "\n"
 
-          commitToMerge=${{ github.event.pull_request.merge_commit_sha }}
-          prNumber=${{github.event.issue.number}}
+
+          prNumber=${{ github.event.inputs.prNumber }}
+          commitToMerge=$(gh pr view $prNumber --json --jq '.merge_commit_sha')
+          
+          
           
           echo "Commit is $commitToMerge"
           echo "PR Number is $prNumber"
