@@ -3,10 +3,6 @@ name: Cherry-pick
 on:
   workflow_dispatch:
     inputs:
-      commit:
-        type: string
-        description: Which commit to cherry-pick
-        required: true
       tags:
         type: string
         description: Which tags to cherry-pick on
@@ -36,23 +32,31 @@ jobs:
           git status
           echo -e "\n"
 
+          commitToMerge=${{ github.event.pull_request.merge_commit_sha }}
+          prNumber=${{github.event.issue.number}}
+          
+          echo "Commit is $commitToMerge"
+          echo "PR Number is $prNumber"
 
           # Cherry picking commit in each tags separated by a comma
           for tag in $(echo "${{ github.event.inputs.tags }}" | tr ',' '\n'); do
-            echo -e "\n-- Cherry-picking commit ${{ github.event.inputs.commit }} in tag $tag --"
-            echo "Checkout tag $tag"
-            git checkout $tag
+            targetBranch="release/$tag"
+
+            echo -e "\n-- Cherry-picking commit $commitToMerge in branch $targetBranch --"
+            echo "Checkout $targetBranch"
+            git checkout $targetBranch
 
             echo "Creating a cherry-pick branch"
             git checkout -b cherry-pick/$tag
 
-            echo "Cherry-pick commit ${{ github.event.inputs.commit }} in tag $tag"
-            git cherry-pick ${{ github.event.inputs.commit }}
+            echo "Cherry-pick commit $commitToMerge in branch $targetBranch"
+            git cherry-pick $commitToMerge
+            git commit -am "Cherry pick #$prNumber for tag $tag"
 
             # Opens a pull request for the cherry pick
             echo "Pushing changes"
             git push origin cherry-pick/$tag
 
             echo "Opening pull request"
-            gh pr create --title "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --body "Cherry-pick ${{ github.event.inputs.commit }} in tag $tag" --base $tag --head cherry-pick/$tag
+            gh pr create --title "Cherry-pick #${prNumber} for tag $tag" --body "Cherry-pick #${prNumber} for tag $tag" --base $targetBranch --head cherry-pick/$tag
           done
