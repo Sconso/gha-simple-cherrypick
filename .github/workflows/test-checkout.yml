@@ -1,0 +1,20 @@
+name: Simple checkout test
+
+on:
+    workflow_dispatch:
+        inputs:
+            ref:
+                type: string
+                required: false
+
+jobs:
+    checkout:
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+              with:
+                ref: ${{ github.event.inputs.ref }}
+            - name: Status
+              run: git status
