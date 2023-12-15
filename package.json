@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "upgrade-api": "npm version minor --no-git-tag-version"
+    "upgrade-api": "npm version --no-git-tag-version",
+    "upgrade-api:foo": "npm version --no-git-tag-version",
+    "upgrade-api:bar": "npm version --no-git-tag-version"
   },
   "author": "",
   "license": "ISC"
