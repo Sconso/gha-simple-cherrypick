@@ -1,0 +1,12 @@
+{
+  "name": "gha-simple-cherrypick",
+  "version": "1.0.0",
+  "description": "This repo is used to iterate on a simple cherry pick github action",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "upgrade-api": "npm version minor --no-git-tag-version"
+  },
+  "author": "",
+  "license": "ISC"
+}
