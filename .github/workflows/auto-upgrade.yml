@@ -1,0 +1,39 @@
+name: "Automatic API Upgrade"
+
+on:
+  workflow_dispatch:
+    inputs:
+      api:
+        description: "API to upgrade"
+        required: false
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  main:
+    name: Upgrade
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run upgrade
+        id: upgrade
+        run: |
+          SCRIPT=${{ github.event.inputs.api && format('upgrade-api:{0}', github.event.inputs.api) || 'upgrade-api' }}
+          VERSION=$(npm run $SCRIPT patch --silent)
+          echo "Upgraded ${{ github.event.inputs.api || 'api' }} to version $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Automatic API Upgrade to ${{ steps.upgrade.outputs.version }}"
+          title: "Automatic API Upgrade to ${{ steps.upgrade.outputs.version }}"
+          body: |
+            Automatic API Upgrade to ${{ steps.upgrade.outputs.version }}
+          branch: "api-upgrade-${{ steps.upgrade.outputs.version }}"
+          base: "main"
