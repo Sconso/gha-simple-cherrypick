@@ -1,6 +1,6 @@
 {
   "name": "gha-simple-cherrypick",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This repo is used to iterate on a simple cherry pick github action",
   "main": "index.js",
   "scripts": {
