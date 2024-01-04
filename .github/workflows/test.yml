@@ -8,7 +8,7 @@ on:
     inputs:
       api:
         description: "API to test"
-        default: ""
+        default: "Test"
         required: false
 
 jobs:
