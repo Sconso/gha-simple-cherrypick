@@ -1,0 +1,32 @@
+name: "Test"
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      api:
+        description: "API to test"
+        default: ""
+        required: false
+
+jobs:
+    main:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v2
+            with:
+              fetch-depth: 0
+          - name: Set up package.json path
+            id: package-path
+            run: |
+              if [ ${{ inputs.api }} ]; then
+                path=$(echo "${{ inputs.api }}")/package.json
+              else
+                path=$(pwd)/package.json
+              fi
+    
+              echo "Path is $path"
+              echo "package_path=$path" >> "$GITHUB_OUTPUT"
