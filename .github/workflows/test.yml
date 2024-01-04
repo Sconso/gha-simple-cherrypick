@@ -22,8 +22,8 @@ jobs:
           - name: Set up package.json path
             id: package-path
             run: |
-              if [ ${{ inputs.api }} ]; then
-                path=$(echo "${{ inputs.api }}")/package.json
+              if [ ${{ github.ref_name }} ]; then
+                path=$(echo "${{ github.ref_name }}")/package.json
               else
                 path=$(pwd)/package.json
               fi
