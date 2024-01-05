@@ -36,13 +36,15 @@ jobs:
 
           echo -e "\n-- Inputs --"
           prNumber=${{ github.event.inputs.prNumber }}
-          prInfos=$(gh pr view $prNumber --json mergeCommit,title,body)
+          prInfos=$(gh pr view $prNumber --json mergeCommit,title,body,author)
           commitToMerge=$(echo $prInfos | jq -r '.mergeCommit.oid')   
           prTitle=$(echo $prInfos | jq -r '.title')
           prBody=$(echo $prInfos | jq -r '.body')
+          prAuthor=$(echo $prInfos | jq -r '.author.login')
 
           echo "PR Number is $prNumber"
           echo "PR Title is $prTitle"
+          echo "PR Author is $prAuthor"
           echo "Commit is $commitToMerge"
 
           echo -e "\n ---------------------------------"
@@ -87,11 +89,11 @@ jobs:
 
             echo "- Opening pull request"
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
-            newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"
+            newPrBody="### Cherrypicking #${prNumber} on $tag @$prAuthor \n-------------\n$prBody"
 
             if [ $conflict -ne 0 ]; then
               newPrTitle="[⚠️CONFLICTS⚠️]$newPrTitle"
-              newPrBody="⚠️ **This PR has conflicts, please resolve them** ⚠️\n$newPrBody"
+              newPrBody="⚠️ **This PR has conflicts, please resolve them @$prAuthor** ⚠️\n$newPrBody"
             fi
 
             echo -e "$newPrBody" | gh pr create --title "$newPrTitle" --base $targetBranch --head $cherryPickBranch -F -
