@@ -13,7 +13,7 @@ on:
         required: true
 
 jobs:
-  release-staging:
+  cherry-pick:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -89,7 +89,7 @@ jobs:
 
             echo "- Opening pull request"
             newPrTitle="[🐚/Cherrypick #$prNumber on $tag] $prTitle"
-            newPrBody="### Cherrypicking #${prNumber} on $tag @$prAuthor \n-------------\n$prBody"
+            newPrBody="### Cherrypicking #${prNumber} on $tag\n-------------\n$prBody"
 
             if [ $conflict -ne 0 ]; then
               newPrTitle="[⚠️CONFLICTS⚠️]$newPrTitle"
